@@ -95,9 +95,6 @@ export class ChangePasswordDto {
   @IsString()
   @MinLength(8)
   currentPassword: string;
-  @IsNotEmpty()
-  @IsString()
-  slug: string
 
   @IsNotEmpty()
   @IsString()

@@ -65,7 +65,6 @@ export class AuthService {
   }
 
   async changePassword(dto: ChangePasswordDto, userData: UserData) {
-    const tenant = await this.tenantValidation(dto.slug)
     await this.changePass(dto, userData)
     return { message: 'Password changed successfully' }
   }
