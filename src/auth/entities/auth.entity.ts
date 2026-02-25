@@ -2,23 +2,22 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   OneToMany,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
   Index,
   BeforeInsert,
   BeforeUpdate,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 import { Message } from 'src/messages/entities/message.entity';
+import { TenantMember } from '../../tenants/entities/tenant.member.entity';
+import * as bcrypt from 'bcrypt';
 import { UserRole } from 'src/common/enums/all.enums';
-import * as bcrypt from 'bcrypt'
+
 @Entity('users')
-@Index(['email', 'tenantId'], { unique: true })
-@Index(['email', 'tenantId', 'isActive'])
 @Index(['verificationToken', 'verificationExpiry'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -30,41 +29,38 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
   password: string;
+
   @BeforeInsert()
   @BeforeUpdate()
   async hashPass() {
-    if(!this.password) return
+    if (!this.password) return;
     const isAlreadyHashed =
       this.password.startsWith('$2a$') ||
       this.password.startsWith('$2b$') ||
       this.password.startsWith('$2y$');
     if (isAlreadyHashed) return;
-    this.password = await bcrypt.hash(this.password, 10)
+    this.password = await bcrypt.hash(this.password, 10);
   }
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CUSTOMER })
   role: UserRole
 
-
-  @Column({ default: 0 })
-  activeTicketsCount: number; // used for auto-assignment (max 5 per agent)
-
   @Column({ type: 'varchar', nullable: true })
-  resetPasswordToken: string | null
+  resetPasswordToken: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  resetPasswordExpiry: Date | null
+  resetPasswordExpiry: Date | null;
 
   @Column({ type: 'varchar', nullable: true })
-  verificationToken: string | null
+  verificationToken: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  verificationExpiry: Date | null
+  verificationExpiry: Date | null;
 
   @Column({ default: true })
   isActive: boolean;
@@ -75,15 +71,19 @@ export class User {
   @Column({ default: false })
   isVerified: boolean;
 
-  @Column({ nullable: true })
-  avatar: string;
+  @Column({ type: 'varchar',nullable: true })
+  avatar: string | null;
 
-  @Column()
-  tenantId: string
+  @Column({ type: 'varchar',nullable: true })
+  avatarPublicId: string | null;
 
-  @ManyToOne(() => Tenant, (tenant) => tenant.users, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'tenantId' })
-  tenant: Tenant;
+  @OneToMany(() => TenantMember, (m) => m.user)
+  memberships: TenantMember[];
+
+
+  @OneToMany(() => Tenant, (tenant) => tenant.owner)
+  tenantsOwned: Tenant[];
+
 
   @OneToMany(() => Ticket, (ticket) => ticket.customer)
   submittedTickets: Ticket[];
@@ -99,4 +99,7 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date
 }

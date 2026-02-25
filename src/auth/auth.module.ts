@@ -7,10 +7,12 @@ import { Tenant } from 'src/tenants/entities/tenant.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/common/guards/jwt.strategy';
+import { TenantMember } from 'src/tenants/entities/tenant.member.entity';
+import { AuthServiceHelper } from './auth.service.helper';
 
 @Module({
-  imports: [PassportModule.register({ defaultStrategy: 'jwt' }), TypeOrmModule.forFeature([User, Tenant]), JwtModule.register({})],
+  imports: [PassportModule.register({ defaultStrategy: 'jwt' }), TypeOrmModule.forFeature([User, Tenant,TenantMember]), JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy,AuthServiceHelper],
 })
 export class AuthModule { }

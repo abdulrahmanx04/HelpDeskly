@@ -5,10 +5,15 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
 } from 'typeorm';
 import { User } from '../../auth/entities/auth.entity';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 import { Category } from '../../categories/entities/category.entity';
+import { TenantMember } from './tenant.member.entity';
 
 @Entity('tenants')
 export class Tenant {
@@ -18,14 +23,23 @@ export class Tenant {
   @Column({ unique: true })
   name: string;
 
+  @Index()
   @Column({ unique: true })
-  slug: string; 
-  
+  slug: string;
+
   @Column({ default: true })
   isActive: boolean;
 
-  @OneToMany(() => User, (user) => user.tenant)
-  users: User[];
+  @Column({ type: 'uuid' })
+  ownerId: string;
+
+  @ManyToOne(() => User, (user) => user.tenantsOwned, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'ownerId' })
+  owner: User;
+
+ 
+  @OneToMany(() => TenantMember, (m) => m.tenant)
+  memberships: TenantMember[];
 
   @OneToMany(() => Ticket, (ticket) => ticket.tenant)
   tickets: Ticket[];
@@ -38,4 +52,7 @@ export class Tenant {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

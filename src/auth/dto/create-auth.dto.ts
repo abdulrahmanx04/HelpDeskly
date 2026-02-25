@@ -32,30 +32,6 @@ export class RegisterTenantDto {
 }
 
 
-export class RegisterDto {
-  @IsNotEmpty()
-  @IsString()
-  firstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  lastName: string;
-
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(8)
-  password: string;
-
-  @IsNotEmpty()
-  @IsString()
-  slug: string;
-
-}
-
 export class LoginDto {
   @IsNotEmpty()
   @IsEmail()
@@ -76,9 +52,7 @@ export class EmailDto {
   @IsEmail()
   email: string;
 
-  @IsNotEmpty()
-  @IsString()
-  slug: string
+
 
 }
 
@@ -100,6 +74,9 @@ export class ChangePasswordDto {
   @IsString()
   @MinLength(8)
   newPassword: string
-
 }
+
+
+
+
 

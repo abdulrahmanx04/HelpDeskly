@@ -7,6 +7,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { AttachmentsModule } from './attachments/attachments.module';
 import { TenantsModule } from './tenants/tenants.module';
 import { MessagesModule } from './messages/messages.module';
+import { UsersModule } from './users/users.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), TypeOrmModule.forRootAsync({
     useFactory: () => ({
@@ -20,7 +22,7 @@ import { MessagesModule } from './messages/messages.module';
       synchronize: true,
       ssl: process.env.DB_SSL === 'true'
     })
-  }), AuthModule, TicketsModule, CategoriesModule, AttachmentsModule, TenantsModule, MessagesModule],
+  }), AuthModule, TicketsModule, CategoriesModule, AttachmentsModule, TenantsModule, MessagesModule, UsersModule, CloudinaryModule],
   controllers: [],
   providers: [],
 })

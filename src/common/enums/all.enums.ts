@@ -18,3 +18,10 @@ export enum TicketPriority {
   HIGH = 'high',
   CRITICAL = 'critical',
 }
+
+
+export enum MemberStatus {
+  INVITED = 'invited',
+  ACTIVE = 'active',
+  SUSPENDED = 'suspended',
+}

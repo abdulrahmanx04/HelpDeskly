@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto, RegisterTenantDto, LoginDto, EmailDto, ResetPasswordDto, ChangePasswordDto } from './dto/create-auth.dto';
+import {  RegisterTenantDto, LoginDto, EmailDto, ResetPasswordDto, ChangePasswordDto } from './dto/create-auth.dto';
 import type { UserData } from 'src/common/interfaces/all.interfaces';
 import { JwtAuthGuard } from 'src/common/guards/auth.guard';
 import { CurrentUser } from 'src/common/decorators/current.user';
@@ -12,11 +12,6 @@ export class AuthController {
   @Post('tenant/register')
   registerTenant(@Body() dto: RegisterTenantDto) {
     return this.authService.registerTenant(dto);
-  }
-
-  @Post('register')
-  register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto)
   }
 
   @Post('resend-email')
