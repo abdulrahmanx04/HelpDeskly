@@ -15,7 +15,7 @@ import { Ticket } from '../../tickets/entities/ticket.entity';
 import { Message } from 'src/messages/entities/message.entity';
 import { TenantMember } from '../../tenants/entities/tenant.member.entity';
 import * as bcrypt from 'bcrypt';
-import { UserRole } from 'src/common/enums/all.enums';
+import {  GlobalUserRole } from 'src/common/enums/all.enums';
 
 @Entity('users')
 @Index(['verificationToken', 'verificationExpiry'])
@@ -47,8 +47,8 @@ export class User {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.CUSTOMER })
-  role: UserRole
+  @Column({ type: 'enum', enum:  GlobalUserRole, default: GlobalUserRole.USER })
+  role:  GlobalUserRole
 
   @Column({ type: 'varchar', nullable: true })
   resetPasswordToken: string | null;

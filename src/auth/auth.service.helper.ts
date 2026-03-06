@@ -6,14 +6,14 @@ import { Tenant } from "src/tenants/entities/tenant.entity";
 import { TenantMember } from "src/tenants/entities/tenant.member.entity";
 import { JwtService } from "@nestjs/jwt";
 import { EmailDto, RegisterTenantDto, LoginDto, ResetPasswordDto, ChangePasswordDto } from "./dto/create-auth.dto";
-import { UserRole, MemberStatus } from "src/common/enums/all.enums";
+import { GlobalUserRole, MemberStatus, TenantMemberRole } from "src/common/enums/all.enums";
 import { sendEmail } from "src/common/utils/email";
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { v4 as uuid } from 'uuid'
 import { UserData } from "src/common/interfaces/all.interfaces";
-@Injectable()
 
+@Injectable()
 export class AuthServiceHelper {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
@@ -23,20 +23,25 @@ export class AuthServiceHelper {
     private jwtService: JwtService
   ) { }
 
-  signToken(user: User, tenantId: string) {
+  signToken(user: User, tenantMember: TenantMember) {
     const token = this.jwtService.sign({
       sub: user.id,
       email: user.email,
-      role: user.role,
-      tenantId
+      tenantId: tenantMember.tenantId,
+      tenantRole: tenantMember.role 
     }, { secret: process.env.JWT, expiresIn: '7d' })
     return { token }
   }
-
+  generateVerificationToken(email: string, type: string): { hashed: string, url: string } {
+    const token = uuid()
+    const hashed = crypto.createHash('sha256').update(token).digest('hex')
+    const url = `${process.env.FRONTEND_URL}/auth/${type}/${token}`
+    return { hashed, url }
+  }
   async tenantExists(slug: string) {
     const tenant = await this.tenantRepo.findOne({ where: { slug } })
     if (tenant) {
-      throw new BadRequestException('Tenant slug is used')
+      throw new BadRequestException('Company slug is used')
     }
   }
   async tenantValidation(slug: string) {
@@ -67,7 +72,7 @@ export class AuthServiceHelper {
         lastName: dto.lastName,
         email: dto.email,
         password: dto.password,
-        role: UserRole.ADMIN,
+        role: GlobalUserRole.SUPER_ADMIN,
         verificationToken: hashed,
         verificationExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
       });
@@ -77,7 +82,16 @@ export class AuthServiceHelper {
         name: dto.companyName,
         slug: dto.slug,
         isActive: true,
-        ownerId: admin.id
+        ownerId: admin.id,
+        businessHours: {
+            monday: { open: '09:00', close: '17:00', enabled: true },
+            tuesday: { open: '09:00', close: '17:00', enabled: true },
+            wednesday: { open: '09:00', close: '17:00', enabled: true },
+            thursday: { open: '09:00', close: '17:00', enabled: true },
+            friday: { open: '09:00', close: '17:00', enabled: true },
+            saturday: { open: '09:00', close: '17:00', enabled: false },
+            sunday: { open: '09:00', close: '17:00', enabled: false },
+        },
       });
       await manager.save(tenant);
 
@@ -85,12 +99,12 @@ export class AuthServiceHelper {
       const membership = manager.create(TenantMember, {
         tenantId: tenant.id,
         userId: admin.id,
-        role: UserRole.ADMIN,
+        role: TenantMemberRole.OWNER,
         status: MemberStatus.ACTIVE
       });
       await manager.save(membership);
 
-      return { tenant, admin };
+      return { tenant, admin,membership };
     })
     await sendEmail('verification', result.admin.email, url)
     return result
@@ -106,19 +120,14 @@ export class AuthServiceHelper {
     if (!checkPass) {
       throw new BadRequestException('Invalid credentials')
     }
-    const isMember = await this.memberRepo.findOne({ where: { userId: user.id, tenantId } })
-    if (!isMember) {
-      throw new BadRequestException('User is not a member of this company');
+    const tenantMember = await this.memberRepo.findOne({ where: { userId: user.id, tenantId ,status: MemberStatus.ACTIVE } })
+    if (!tenantMember) {
+      throw new BadRequestException('User is not a member of this company or company does not exist');
     }
-    return user
+    return {user,tenantMember}
   }
 
-  generateVerificationToken(email: string, type: string): { hashed: string, url: string } {
-    const token = uuid()
-    const hashed = crypto.createHash('sha256').update(token).digest('hex')
-    const url = `${process.env.FRONTEND_URL}/auth/${type}/${token}`
-    return { hashed, url }
-  }
+  
   async verifyUser(token: string) {
     const verificationToken = crypto.createHash('sha256').update(token).digest('hex')
     const user = await this.userRepo.findOne({

@@ -12,9 +12,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
 
-
- 
-
   @Get('me')
   findOne(@Param('id') id: string, @CurrentUser() userData: UserData) {
     return this.usersService.findOne(id,userData);

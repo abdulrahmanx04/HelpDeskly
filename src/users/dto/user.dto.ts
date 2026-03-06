@@ -1,5 +1,4 @@
 import { Expose } from "class-transformer";
-import { UserRole } from "src/common/enums/all.enums";
 
 
 
@@ -12,7 +11,7 @@ export class UserResponseDto {
     @Expose()lastName: string;
     @Expose()email: string
 
-    @Expose() role: UserRole
+    @Expose() role: string
         
     @Expose()isOnline: boolean;
         

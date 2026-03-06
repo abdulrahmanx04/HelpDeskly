@@ -6,16 +6,16 @@ import { AuthServiceHelper } from './auth.service.helper';
 export class AuthService {
   constructor(private authHelper: AuthServiceHelper) { }
   
-  async registerTenant(dto: RegisterTenantDto) {
+  async registerAdminTenant(dto: RegisterTenantDto) {
     await this.authHelper.tenantExists(dto.slug)
     const result = await this.authHelper.registerAdminAndTenant(dto)
-    return this.authHelper.signToken(result.admin,result.tenant.id)
+    return this.authHelper.signToken(result.admin,result.membership)
   }
 
   async login(dto: LoginDto) {
     const tenant = await this.authHelper.tenantValidation(dto.slug)
-    const user = await this.authHelper.authBeforeLogin(dto, tenant.id)
-    return this.authHelper.signToken(user,tenant.id)
+    const {user,tenantMember} = await this.authHelper.authBeforeLogin(dto, tenant.id)
+    return this.authHelper.signToken(user,tenantMember)
   }
 
   async verifyEmail(token: string) {

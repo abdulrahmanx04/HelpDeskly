@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Tenant } from './tenant.entity';
 import { User } from '../../auth/entities/auth.entity';
-import { UserRole } from 'src/common/enums/all.enums';
+import { TenantMemberRole} from 'src/common/enums/all.enums';
 import { MemberStatus } from 'src/common/enums/all.enums';
 
 @Entity('tenant_members')
@@ -26,9 +26,10 @@ export class TenantMember {
   @Column({ type: 'uuid' })
   userId: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.CUSTOMER })
-  role: UserRole;
+  @Column({ type: 'enum', enum:TenantMemberRole, default: TenantMemberRole.CUSTOMER })
+  role: TenantMemberRole;
 
+ 
   @Column({ default: 0 })
   activeTicketsCount: number;
 

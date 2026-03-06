@@ -1,5 +1,10 @@
-export enum UserRole {
-  SUPER_ADMIN = 'super_admin',
+
+export enum GlobalUserRole {
+  SUPER_ADMIN= 'SUPER_ADMIN',
+  USER= 'USER'
+}
+export enum TenantMemberRole {
+  OWNER = 'owner',
   ADMIN = 'admin',
   AGENT = 'agent',
   CUSTOMER = 'customer',
@@ -24,4 +29,16 @@ export enum MemberStatus {
   INVITED = 'invited',
   ACTIVE = 'active',
   SUSPENDED = 'suspended',
+}
+
+export enum TenantLanguage {
+  AR= 'ar',
+  EN= 'en',
+}
+
+export enum InviteStatus {
+    PENDING = 'PENDING',
+    ACCEPTED = 'ACCEPTED',
+    REVOKED = 'REVOKED',
+    EXPIRED = 'EXPIRED'
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
@@ -14,10 +14,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         })
     }
     async validate(payload: any) {
+        if(!payload.tenantId) throw new UnauthorizedException('Company not found')
         return {
             id: payload.sub,
             email: payload.email,
-            role: payload.role,
+            tenantRole: payload.tenantRole,
             tenantId: payload.tenantId
         }
     }

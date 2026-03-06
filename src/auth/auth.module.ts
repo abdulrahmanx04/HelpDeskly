@@ -14,5 +14,6 @@ import { AuthServiceHelper } from './auth.service.helper';
   imports: [PassportModule.register({ defaultStrategy: 'jwt' }), TypeOrmModule.forFeature([User, Tenant,TenantMember]), JwtModule.register({})],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy,AuthServiceHelper],
+  exports: [AuthServiceHelper],
 })
 export class AuthModule { }

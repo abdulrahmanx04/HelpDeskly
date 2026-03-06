@@ -10,8 +10,8 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Post('tenant/register')
-  registerTenant(@Body() dto: RegisterTenantDto) {
-    return this.authService.registerTenant(dto);
+  registerAdminTenant(@Body() dto: RegisterTenantDto) {
+    return this.authService.registerAdminTenant(dto);
   }
 
   @Post('resend-email')
@@ -46,6 +46,5 @@ export class AuthController {
   changePassword(@Body() dto: ChangePasswordDto, @CurrentUser() userData: UserData) {
     return this.authService.changePassword(dto, userData)
   }
-
 
 }

@@ -1,9 +1,10 @@
 export interface AuthRequest {
-    user?: UserData
+    user: UserData
 }
 
 export interface UserData {
     id: string,
-    role: string,
-    email: string
+    email: string,
+    tenantId: string,
+    tenantRole: string
 }

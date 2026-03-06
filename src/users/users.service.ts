@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UserResponseDto } from './dto/create-user.dto';
+import { UserResponseDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserData } from 'src/common/interfaces/all.interfaces';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UploadApiResponse } from 'cloudinary';
+import { UpdateTenantDto } from 'src/tenants/dto/update-tenant.dto';
 
 @Injectable()
 export class UsersService {
@@ -51,7 +52,7 @@ export class UsersService {
     }
   }
 
-  checkFieldsForUpdate(dto: UpdateUserDto, file?: Express.Multer.File) {
+  checkFieldsForUpdate(dto: UpdateUserDto | UpdateTenantDto, file?: Express.Multer.File) {
     const hasFields = Object.values(dto).some(v => v != null);
     if (!hasFields && !file) {
       throw new BadRequestException('No fields provided for update');

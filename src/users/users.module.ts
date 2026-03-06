@@ -8,5 +8,6 @@ import { User } from 'src/auth/entities/auth.entity';
   imports: [TypeOrmModule.forFeature([User]), CloudinaryModule],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService]
 })
 export class UsersModule { }

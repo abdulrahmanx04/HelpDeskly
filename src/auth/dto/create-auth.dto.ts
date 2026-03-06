@@ -1,6 +1,5 @@
 
 import { IsEmail, IsString, MinLength, Matches, IsOptional, IsEnum, IsNotEmpty } from 'class-validator';
-import { UserRole } from 'src/common/enums/all.enums';
 
 export class RegisterTenantDto {
   @IsNotEmpty()
