@@ -9,11 +9,12 @@ import {
   IsEnum,
   IsNotEmpty,
   MinLength,
+  isNotEmpty,
 } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
 import { TenantLanguage, TenantMemberRole } from 'src/common/enums/all.enums';
 
-class BusinessHoursDayDto {
+export class BusinessHoursDayDto {
   @Expose()
   @IsString()
   open: string;
@@ -26,7 +27,30 @@ class BusinessHoursDayDto {
   @IsBoolean()
   enabled: boolean;
 }
+export class TenantData {
+  @Expose() name: string
+  @Expose() slug: string
+}
+export class InviterData {
+  @Expose() firstName: string
+  @Expose() email: string
+}
+export class UserDto {
+  @Expose()
+  id: string;
 
+  @Expose()
+  firstName: string;
+
+  @Expose()
+  lastName: string;
+
+  @Expose()
+  email: string;
+
+  @Expose()
+  avatar?: string;
+}
 export class BusinessHoursDto {
 
   @Expose()
@@ -129,4 +153,7 @@ export class AcceptInviteDto {
 
 }
 
-
+export class UpdateMemberDto {
+  @IsEnum(TenantMemberRole)
+  role: TenantMemberRole;
+}

@@ -7,15 +7,18 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Tenant } from './tenant.entity';
 import { User } from '../../auth/entities/auth.entity';
-import { TenantMemberRole} from 'src/common/enums/all.enums';
+import { TenantMemberRole } from 'src/common/enums/all.enums';
 import { MemberStatus } from 'src/common/enums/all.enums';
 
 @Entity('tenant_members')
-@Index(['tenantId', 'userId'], { unique: true })
+@Index(['tenantId', 'userId', 'deletedAt'], { unique: true })
 @Index(['tenantId', 'role'])
+@Index(['tenantId', 'status'])
+@Index(['tenantId', 'deletedAt'])
 export class TenantMember {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,12 +29,8 @@ export class TenantMember {
   @Column({ type: 'uuid' })
   userId: string;
 
-  @Column({ type: 'enum', enum:TenantMemberRole, default: TenantMemberRole.CUSTOMER })
+  @Column({ type: 'enum', enum: TenantMemberRole, default: TenantMemberRole.AGENT })
   role: TenantMemberRole;
-
- 
-  @Column({ default: 0 })
-  activeTicketsCount: number;
 
   @Column({ type: 'enum', enum: MemberStatus, default: MemberStatus.ACTIVE })
   status: MemberStatus;
@@ -43,6 +42,15 @@ export class TenantMember {
   @ManyToOne(() => User, (user) => user.memberships, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @Column({ nullable: true })
+  invitedBy?: string;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
+
+  @Column({ nullable: true })
+  deletedBy?: string;
 
   @CreateDateColumn()
   createdAt: Date;

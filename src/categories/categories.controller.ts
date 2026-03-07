@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Put, HttpCode } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreateCategoryDto, UpdateCategoryDto } from './dto/create-category.dto';
+import { CurrentUser } from 'src/common/decorators/current.user';
+import type { UserData } from 'src/common/interfaces/all.interfaces';
+import { JwtAuthGuard } from 'src/common/guards/auth.guard';
+import { TenantsAccessGuard } from 'src/common/guards/tenants.roles.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { TenantMemberRole } from 'src/common/enums/all.enums';
+import { Roles } from 'src/common/decorators/roles';
+import { Paginate } from 'nestjs-paginate';
+import type { PaginateQuery } from 'nestjs-paginate';
 
-@Controller('categories')
+@Controller('tenants/me/categories')
+@UseGuards(JwtAuthGuard, TenantsAccessGuard)
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(private readonly categoriesService: CategoriesService) { }
 
+  @UseGuards(RolesGuard)
+  @Roles(TenantMemberRole.ADMIN, TenantMemberRole.OWNER)
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoriesService.create(createCategoryDto);
+  create(@Body() dto: CreateCategoryDto, @CurrentUser() userData: UserData) {
+    return this.categoriesService.create(dto, userData);
   }
 
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  findAll(@Paginate() query: PaginateQuery,@CurrentUser() userData: UserData) {
+    return this.categoriesService.findAll(query,userData);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
+  findOne(@Param('id') id: string,@CurrentUser() userData: UserData) {
+    return this.categoriesService.findOne(id,userData);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoriesService.update(+id, updateCategoryDto);
+  @UseGuards(RolesGuard)
+  @Roles(TenantMemberRole.ADMIN, TenantMemberRole.OWNER)
+  @Put(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateCategoryDto,@CurrentUser() userData: UserData) {
+    return this.categoriesService.update(id, dto,userData);
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(TenantMemberRole.ADMIN, TenantMemberRole.OWNER)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
+  @HttpCode(204)
+  remove(@Param('id') id: string,@CurrentUser() userData: UserData) {
+    return this.categoriesService.remove(id,userData);
   }
 }

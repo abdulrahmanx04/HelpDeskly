@@ -4,9 +4,11 @@ import { Tenant } from "./tenant.entity";
 import { User } from "src/auth/entities/auth.entity";
 
 @Entity('invites')
-@Index(['email','tenantId','status'])
-@Index(['token']) 
+@Index(['email', 'tenantId', 'status', 'deletedAt'])
+@Index(['token', 'deletedAt'], { unique: true })
 @Index(['tenantId', 'status'])
+@Index(['tenantId', 'role'])
+@Index(['tenantId', 'deletedAt'])
 export class Invite {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -21,31 +23,32 @@ export class Invite {
     })
     status: InviteStatus;
 
-
-    @Column({unique: true})
+    @Column()
     token: string;
 
-    @Column({type: 'enum', enum: TenantMemberRole,default: TenantMemberRole.AGENT})
+    
+
+    @Column({ type: 'enum', enum: TenantMemberRole, default: TenantMemberRole.AGENT })
     role: TenantMemberRole;
 
     @Column()
     tenantId: string;
 
     @ManyToOne(() => Tenant, t => t.invites)
-    @JoinColumn({name: 'tenantId'})
+    @JoinColumn({ name: 'tenantId' })
     tenant: Tenant
 
     @Column()
-    invitedBy: string; 
+    invitedBy: string;
 
     @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
     @JoinColumn({ name: 'invitedBy' })
     inviter: User;
 
-    @Column({type: 'timestamp',nullable: true})
-    acceptedAt: Date| null;
-    
-    @Column({type: 'varchar',nullable: true})
+    @Column({ type: 'timestamp', nullable: true })
+    acceptedAt: Date | null;
+
+    @Column({ type: 'varchar', nullable: true })
     acceptedBy: string
 
     @Column({ type: 'timestamp', nullable: true })
@@ -53,7 +56,7 @@ export class Invite {
 
     @Column({ nullable: true })
     revokedBy?: string;
-    
+
     @Column()
     expiresAt: Date;
 
@@ -66,6 +69,6 @@ export class Invite {
     }
 
     canBeAccpeted(): boolean {
-        return this.status == InviteStatus.PENDING &&  !this.isExpired()
+        return this.status == InviteStatus.PENDING && !this.isExpired()
     }
 }

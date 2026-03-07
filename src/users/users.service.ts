@@ -8,7 +8,8 @@ import { Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UploadApiResponse } from 'cloudinary';
-import { UpdateTenantDto } from 'src/tenants/dto/update-tenant.dto';
+import { UpdateTenantDto } from 'src/tenants/dto/create-tenant.dto';
+import { UpdateCategoryDto } from 'src/categories/dto/create-category.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,8 +24,7 @@ export class UsersService {
 
 
 
-
-  async update(dto: UpdateUserDto, userData: UserData, file?: Express.Multer.File) {
+  async update(dto: UpdateUserDto, userData: UserData, file?: Express.Multer.File) : Promise<UserResponseDto>{
     this.checkFieldsForUpdate(dto, file)
     const user = await this.userRepo.findOneOrFail({ where: { id: userData.id } })
     await this.uploadAvatar(user, file)
@@ -37,8 +37,7 @@ export class UsersService {
     if (user.avatar && user.avatarPublicId) {
       await this.cloudinaryService.deleteFile(user.avatarPublicId);
     }
-    user.deletedAt = new Date()
-    await this.userRepo.save(user);
+    await this.userRepo.delete({id: userData.id})
   }
 
   async uploadAvatar(user: User, file?: Express.Multer.File): Promise<void> {
@@ -52,7 +51,7 @@ export class UsersService {
     }
   }
 
-  checkFieldsForUpdate(dto: UpdateUserDto | UpdateTenantDto, file?: Express.Multer.File) {
+  checkFieldsForUpdate(dto: UpdateUserDto | UpdateTenantDto | UpdateCategoryDto, file?: Express.Multer.File): void {
     const hasFields = Object.values(dto).some(v => v != null);
     if (!hasFields && !file) {
       throw new BadRequestException('No fields provided for update');

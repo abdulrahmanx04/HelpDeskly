@@ -18,6 +18,7 @@ import { TenantLanguage } from 'src/common/enums/all.enums';
 import { Invite } from './invite.entity';
 
 @Entity('tenants')
+@Index(['deletedAt'])
 export class Tenant {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -25,8 +26,9 @@ export class Tenant {
   @Column()
   name: string;
 
-  @Index()
-  @Column({ unique: true })
+
+  @Column()
+  @Index(['slug', 'deletedAt'], { unique: true })
   slug: string;
 
   @Column({ default: true })
@@ -34,7 +36,7 @@ export class Tenant {
 
   @Column({ nullable: true })
   logo: string;
-  
+
   @Column({ nullable: true })
   logoPublicId: string;
 
@@ -44,7 +46,7 @@ export class Tenant {
   @Column({ default: 'UTC' })
   timezone: string;
 
-  @Column({ type: 'enum',enum: TenantLanguage,default: TenantLanguage.AR })
+  @Column({ type: 'enum', enum: TenantLanguage, default: TenantLanguage.AR })
   language: TenantLanguage
 
   @Column({ nullable: true })
@@ -76,7 +78,7 @@ export class Tenant {
 
   @OneToMany(() => TenantMember, (m) => m.tenant)
   memberships: TenantMember[];
-  
+
   @OneToMany(() => Invite, i => i.tenant)
   invites: Invite[]
 

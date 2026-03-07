@@ -19,6 +19,9 @@ import {  GlobalUserRole } from 'src/common/enums/all.enums';
 
 @Entity('users')
 @Index(['verificationToken', 'verificationExpiry'])
+@Index(['email', 'isActive'])  
+@Index(['verificationToken'])                        
+@Index(['resetPasswordToken']) 
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -100,6 +103,4 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @DeleteDateColumn()
-  deletedAt: Date
 }

@@ -1,6 +1,6 @@
 import { Expose, Type } from "class-transformer";
-import { InviteStatus, TenantLanguage, TenantMemberRole } from "src/common/enums/all.enums";
-import { BusinessHoursDto } from "./update-tenant.dto";
+import { InviteStatus, MemberStatus, TenantLanguage, TenantMemberRole } from "src/common/enums/all.enums";
+import { BusinessHoursDto, InviterData, TenantData, UserDto } from "./create-tenant.dto";
 
 
 export class TenantResponseDto {
@@ -12,8 +12,6 @@ export class TenantResponseDto {
 
   @Expose()
   slug: string;
-
- 
 
   @Expose()
   isActive: boolean;
@@ -49,14 +47,7 @@ export class TenantResponseDto {
   @Expose()
   updatedAt: Date;
 }
-class TenantData {
-  @Expose() name: string
-  @Expose() slug: string
-}
-class InviterData {
-  @Expose() firstName: string
-  @Expose() email: string
-}
+
 
 export class InviteResponseDto {
   @Expose() id: string
@@ -77,7 +68,29 @@ export class InviteResponseDto {
 
 }
 
+export class MemberResponseDto {
+  @Expose()
+  id: string;
 
+  @Expose()
+  role: TenantMemberRole;
+
+  @Expose()
+  status: MemberStatus;
+
+  @Expose()
+  @Type(() => UserDto)
+  user: UserDto;
+
+  @Expose()
+  invitedBy?: string;
+
+  @Expose()
+  createdAt: Date;
+
+  @Expose()
+  updatedAt: Date;
+}
 
 
 

@@ -5,11 +5,18 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  Index,
+  UpdateDateColumn,
+  CreateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 
 @Entity('categories')
+@Index(['tenantId','name', 'deletedAt'], {unique: true})
+@Index(['tenantId', 'deletedAt'])                   
+@Index(['tenantId', 'isActive'])
 export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -17,8 +24,14 @@ export class Category {
   @Column()
   name: string; 
 
-  @Column({ nullable: true })
-  description: string;
+  @Column({ type: 'text', nullable: true })
+  description?: string;
+
+  @Column({ type: 'varchar', length: 7, nullable: true })
+  color?: string
+
+  @Column({ default: true })
+  isActive: boolean
 
   @Column()
   tenantId: string;
@@ -29,4 +42,17 @@ export class Category {
 
   @OneToMany(() => Ticket, (ticket) => ticket.category)
   tickets: Ticket[];
+
+  @Column({nullable: true})
+  deletedBy?: string
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date
+
 }
