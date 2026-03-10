@@ -5,25 +5,34 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
+  UpdateDateColumn,
+  Index,
 } from 'typeorm';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 
 @Entity('attachments')
+@Index(['ticketId'])
 export class Attachment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  filename: string; 
+  fileName: string;
 
   @Column()
   url: string;
 
-  @Column()
-  mimeType: string; 
+  @Column({ nullable: true })
+  publicId: string;
 
   @Column()
-  size: number; 
+  mimeType: string;
+
+  @Column({ type: 'bigint' })
+  size: number;
+
+  @Column({ nullable: true })
+  uploadedBy?: string;
 
   @Column()
   ticketId: string;
@@ -34,4 +43,7 @@ export class Attachment {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date
 }

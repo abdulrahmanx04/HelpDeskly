@@ -11,7 +11,7 @@ import { Roles } from 'src/common/decorators/roles';
 import { Paginate } from 'nestjs-paginate';
 import type { PaginateQuery } from 'nestjs-paginate';
 
-@Controller('tenants/me/categories')
+@Controller('categories')
 @UseGuards(JwtAuthGuard, TenantsAccessGuard)
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) { }

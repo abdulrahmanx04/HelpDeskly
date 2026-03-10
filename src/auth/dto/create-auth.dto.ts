@@ -5,6 +5,7 @@ export class RegisterTenantDto {
   @IsNotEmpty()
   @IsString()
   companyName: string;
+  
   @IsNotEmpty()
   @IsString()
   @Matches(/^[a-z0-9-]+$/, {

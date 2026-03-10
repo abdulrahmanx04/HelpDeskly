@@ -5,7 +5,6 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
-  DeleteDateColumn,
   ManyToOne,
   JoinColumn,
   Index,
@@ -13,12 +12,11 @@ import {
 import { User } from '../../auth/entities/auth.entity';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 import { Category } from '../../categories/entities/category.entity';
-import { TenantMember } from './tenant.member.entity';
 import { TenantLanguage } from 'src/common/enums/all.enums';
-import { Invite } from './invite.entity';
+import { TenantMember } from 'src/members/entities/member.entity';
+import { Invite } from 'src/invites/entities/invite.entity';
 
 @Entity('tenants')
-@Index(['deletedAt'])
 export class Tenant {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,9 +24,8 @@ export class Tenant {
   @Column()
   name: string;
 
-
   @Column()
-  @Index(['slug', 'deletedAt'], { unique: true })
+  @Index(['slug'], { unique: true })
   slug: string;
 
   @Column({ default: true })
@@ -93,7 +90,4 @@ export class Tenant {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date;
 }

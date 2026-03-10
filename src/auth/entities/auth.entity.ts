@@ -8,20 +8,19 @@ import {
   Index,
   BeforeInsert,
   BeforeUpdate,
-  DeleteDateColumn,
 } from 'typeorm';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 import { Message } from 'src/messages/entities/message.entity';
-import { TenantMember } from '../../tenants/entities/tenant.member.entity';
 import * as bcrypt from 'bcrypt';
-import {  GlobalUserRole } from 'src/common/enums/all.enums';
+import { GlobalUserRole } from 'src/common/enums/all.enums';
+import { TenantMember } from 'src/members/entities/member.entity';
 
 @Entity('users')
 @Index(['verificationToken', 'verificationExpiry'])
-@Index(['email', 'isActive'])  
-@Index(['verificationToken'])                        
-@Index(['resetPasswordToken']) 
+@Index(['email', 'isActive'])
+@Index(['verificationToken'])
+@Index(['resetPasswordToken'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -50,8 +49,8 @@ export class User {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
-  @Column({ type: 'enum', enum:  GlobalUserRole, default: GlobalUserRole.USER })
-  role:  GlobalUserRole
+  @Column({ type: 'enum', enum: GlobalUserRole, default: GlobalUserRole.USER })
+  role: GlobalUserRole
 
   @Column({ type: 'varchar', nullable: true })
   resetPasswordToken: string | null;
@@ -74,10 +73,10 @@ export class User {
   @Column({ default: false })
   isVerified: boolean;
 
-  @Column({ type: 'varchar',nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   avatar: string | null;
 
-  @Column({ type: 'varchar',nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   avatarPublicId: string | null;
 
   @OneToMany(() => TenantMember, (m) => m.user)

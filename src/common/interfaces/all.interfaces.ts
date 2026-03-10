@@ -8,3 +8,11 @@ export interface UserData {
     tenantId: string,
     tenantRole: string
 }
+
+export interface AttachmentInterface {
+    fileName: string
+    url: string
+    publicId:string
+    mimeType: string
+    size: number
+}

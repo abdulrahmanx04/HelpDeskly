@@ -4,8 +4,8 @@ import { CategoriesController } from './categories.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { Tenant } from 'src/tenants/entities/tenant.entity';
-import { TenantMember } from 'src/tenants/entities/tenant.member.entity';
 import { UsersModule } from 'src/users/users.module';
+import { TenantMember } from 'src/members/entities/member.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Category,Tenant,TenantMember]),UsersModule],

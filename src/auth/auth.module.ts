@@ -7,8 +7,8 @@ import { Tenant } from 'src/tenants/entities/tenant.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/common/guards/jwt.strategy';
-import { TenantMember } from 'src/tenants/entities/tenant.member.entity';
 import { AuthServiceHelper } from './auth.service.helper';
+import { TenantMember } from 'src/members/entities/member.entity';
 
 @Module({
   imports: [PassportModule.register({ defaultStrategy: 'jwt' }), TypeOrmModule.forFeature([User, Tenant,TenantMember]), JwtModule.register({})],

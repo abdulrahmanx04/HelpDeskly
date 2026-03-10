@@ -8,21 +8,19 @@ import {
   Index,
   UpdateDateColumn,
   CreateDateColumn,
-  DeleteDateColumn,
 } from 'typeorm';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 
 @Entity('categories')
-@Index(['tenantId','name', 'deletedAt'], {unique: true})
-@Index(['tenantId', 'deletedAt'])                   
+@Index(['tenantId', 'name'], { unique: true })
 @Index(['tenantId', 'isActive'])
 export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  name: string; 
+  name: string;
 
   @Column({ type: 'text', nullable: true })
   description?: string;
@@ -43,7 +41,7 @@ export class Category {
   @OneToMany(() => Ticket, (ticket) => ticket.category)
   tickets: Ticket[];
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   deletedBy?: string
 
   @CreateDateColumn()
@@ -51,8 +49,5 @@ export class Category {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date
 
 }

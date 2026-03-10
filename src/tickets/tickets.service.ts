@@ -1,12 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import {  Injectable } from '@nestjs/common';
 import { CreateTicketDto } from './dto/create-ticket.dto';
-import { UpdateTicketDto } from './dto/update-ticket.dto';
+import {  UserData } from 'src/common/interfaces/all.interfaces';
+import { TicketsServiceHelper } from './tickets.service.helper';
+import { plainToInstance } from 'class-transformer';
+import { TicketResponseDto } from './dto/ticket.dto';
 
 @Injectable()
 export class TicketsService {
-  create(createTicketDto: CreateTicketDto) {
-    return 'This action adds a new ticket';
-  }
+  constructor
+  (private ticketHelperService: TicketsServiceHelper){}
+
+  async create(dto: CreateTicketDto, userData: UserData, files?: Express.Multer.File[]): Promise<TicketResponseDto> {
+    const ticket= await this.ticketHelperService.createTicket(dto,userData,files)
+    return plainToInstance(TicketResponseDto, ticket,{excludeExtraneousValues: true})
+  } 
 
   findAll() {
     return `This action returns all tickets`;
@@ -16,7 +23,7 @@ export class TicketsService {
     return `This action returns a #${id} ticket`;
   }
 
-  update(id: number, updateTicketDto: UpdateTicketDto) {
+  update(id: number, updateTicketDto) {
     return `This action updates a #${id} ticket`;
   }
 

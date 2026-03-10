@@ -8,11 +8,10 @@ import {
   Length,
   IsEnum,
   IsNotEmpty,
-  MinLength,
-  isNotEmpty,
+  Matches,
 } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
-import { TenantLanguage, TenantMemberRole } from 'src/common/enums/all.enums';
+import { TenantLanguage } from 'src/common/enums/all.enums';
 
 export class BusinessHoursDayDto {
   @Expose()
@@ -31,10 +30,7 @@ export class TenantData {
   @Expose() name: string
   @Expose() slug: string
 }
-export class InviterData {
-  @Expose() firstName: string
-  @Expose() email: string
-}
+
 export class UserDto {
   @Expose()
   id: string;
@@ -89,7 +85,18 @@ export class BusinessHoursDto {
   friday: BusinessHoursDayDto;
 
 }
-
+export class CreateTenantDto {
+    @IsNotEmpty()
+    @IsString()
+    companyName: string;
+    
+    @IsNotEmpty()
+    @IsString()
+    @Matches(/^[a-z0-9-]+$/, {
+      message: 'Slug can only contain lowercase letters, numbers, and dashes',
+    })
+    slug: string;
+}
 export class UpdateTenantDto {
   @IsOptional()
   @IsString()
@@ -124,36 +131,6 @@ export class UpdateTenantDto {
   businessHours?: BusinessHoursDto;
 }
 
-export class InviteDto {
-  @IsNotEmpty()
-  @IsEmail()
-  email: string
 
 
-  @IsOptional()
-  @IsEnum(TenantMemberRole)
-  role?: TenantMemberRole
 
-}
-
-export class AcceptInviteDto {
-  @IsNotEmpty()
-  @IsString()
-  firstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  lastName: string;
-
-  
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(8)
-  password: string;
-
-}
-
-export class UpdateMemberDto {
-  @IsEnum(TenantMemberRole)
-  role: TenantMemberRole;
-}

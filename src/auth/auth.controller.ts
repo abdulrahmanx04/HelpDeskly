@@ -9,7 +9,7 @@ import { CurrentUser } from 'src/common/decorators/current.user';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-  @Post('tenant/register')
+  @Post('/register')
   registerAdminTenant(@Body() dto: RegisterTenantDto) {
     return this.authService.registerAdminTenant(dto);
   }

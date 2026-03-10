@@ -7,20 +7,27 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 import { User } from '../../auth/entities/auth.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { Message } from '../../messages/entities/message.entity';
 import { Attachment } from '../../attachments/entities/attachment.entity'
-import { TicketPriority,TicketStatus } from 'src/common/enums/all.enums';
+import { TicketPriority, TicketStatus } from 'src/common/enums/all.enums';
 
 @Entity('tickets')
+@Index(['tenantId', 'status'])
+@Index(['tenantId', 'priority'])
+@Index(['tenantId', 'agentId'])
+@Index(['tenantId', 'customerId'])
+@Index(['tenantId', 'categoryId'])
+@Index(['tenantId', 'createdAt'])
 export class Ticket {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ length: 100 })
   subject: string;
 
   @Column({ type: 'text' })
@@ -32,7 +39,6 @@ export class Ticket {
   @Column({ type: 'enum', enum: TicketPriority, default: TicketPriority.MEDIUM })
   priority: TicketPriority;
 
-  // ── Multi-tenancy ──────────────────────────────
   @Column()
   tenantId: string;
 
@@ -40,7 +46,6 @@ export class Ticket {
   @JoinColumn({ name: 'tenantId' })
   tenant: Tenant;
 
-  // ── Customer who opened it ─────────────────────
   @Column()
   customerId: string;
 
@@ -48,7 +53,6 @@ export class Ticket {
   @JoinColumn({ name: 'customerId' })
   customer: User;
 
-  // ── Agent assigned to it ───────────────────────
   @Column({ nullable: true })
   agentId: string;
 
@@ -56,7 +60,6 @@ export class Ticket {
   @JoinColumn({ name: 'agentId' })
   agent: User;
 
-  // ── Category ───────────────────────────────────
   @Column({ nullable: true })
   categoryId: string;
 
@@ -64,11 +67,10 @@ export class Ticket {
   @JoinColumn({ name: 'categoryId' })
   category: Category;
 
-  // ── Relations ──────────────────────────────────
   @OneToMany(() => Message, (message) => message.ticket)
   messages: Message[];
 
-  @OneToMany(() => Attachment, (att) => att.ticket)
+  @OneToMany(() => Attachment, (att) => att.ticket, { cascade: true })
   attachments: Attachment[];
 
   @Column({ nullable: true })

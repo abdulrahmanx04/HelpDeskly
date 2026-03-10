@@ -5,11 +5,16 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
+  UpdateDateColumn,
+  Index,
 } from 'typeorm';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 import { User } from '../../auth/entities/auth.entity';
 
 @Entity('messages')
+@Index(['ticketId', 'createdAt'])
+@Index(['ticketId', 'isInternal'])
+@Index(['senderId'])
 export class Message {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -18,12 +23,11 @@ export class Message {
   body: string;
 
   @Column({ default: false })
-  isInternal: boolean; // true = private agent note, customer can NOT see it
+  isInternal: boolean;
 
   @Column({ default: false })
-  isRead: boolean; // for read receipts
+  isRead: boolean;
 
-  // ── Ticket ─────────────────────────────────────
   @Column()
   ticketId: string;
 
@@ -31,7 +35,6 @@ export class Message {
   @JoinColumn({ name: 'ticketId' })
   ticket: Ticket;
 
-  // ── Who sent it ────────────────────────────────
   @Column()
   senderId: string;
 
@@ -41,4 +44,7 @@ export class Message {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date
 }

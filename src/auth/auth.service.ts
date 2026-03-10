@@ -4,7 +4,6 @@ import { UserData } from 'src/common/interfaces/all.interfaces';
 import { AuthServiceHelper } from './auth.service.helper';
 import { Tenant } from 'src/tenants/entities/tenant.entity';
 import { User } from './entities/auth.entity';
-import { TenantMember } from 'src/tenants/entities/tenant.member.entity';
 @Injectable()
 export class AuthService {
   constructor(private authHelper: AuthServiceHelper) { }

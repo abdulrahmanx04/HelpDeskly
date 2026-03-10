@@ -1,14 +1,13 @@
 import { InviteStatus, TenantMemberRole } from "src/common/enums/all.enums";
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToOne, Index, ManyToOne, JoinColumn, DeleteDateColumn } from "typeorm";
-import { Tenant } from "./tenant.entity";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToOne, Index, ManyToOne, JoinColumn } from "typeorm";
 import { User } from "src/auth/entities/auth.entity";
+import { Tenant } from "src/tenants/entities/tenant.entity";
 
 @Entity('invites')
-@Index(['email', 'tenantId', 'status', 'deletedAt'])
-@Index(['token', 'deletedAt'], { unique: true })
+@Index(['email', 'tenantId', 'status'])
+@Index(['token'], { unique: true })
 @Index(['tenantId', 'status'])
 @Index(['tenantId', 'role'])
-@Index(['tenantId', 'deletedAt'])
 export class Invite {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -26,7 +25,6 @@ export class Invite {
     @Column()
     token: string;
 
-    
 
     @Column({ type: 'enum', enum: TenantMemberRole, default: TenantMemberRole.AGENT })
     role: TenantMemberRole;
@@ -62,8 +60,6 @@ export class Invite {
 
     @CreateDateColumn()
     createdAt: Date;
-    @DeleteDateColumn()
-    deletedAt: Date
     isExpired(): boolean {
         return new Date() > this.expiresAt;
     }

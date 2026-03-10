@@ -1,15 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
-import { UpdateTicketDto } from './dto/update-ticket.dto';
+import { CurrentUser } from 'src/common/decorators/current.user';
+import type { UserData } from 'src/common/interfaces/all.interfaces';
+import { JwtAuthGuard } from 'src/common/guards/auth.guard';
+import { TenantsAccessGuard } from 'src/common/guards/tenants.roles.guard';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('tickets')
+@UseGuards(JwtAuthGuard,TenantsAccessGuard)
 export class TicketsController {
-  constructor(private readonly ticketsService: TicketsService) {}
+  constructor(private readonly ticketsService: TicketsService) { }
 
+  
+  @UseInterceptors(FilesInterceptor('attachments',5))
   @Post()
-  create(@Body() createTicketDto: CreateTicketDto) {
-    return this.ticketsService.create(createTicketDto);
+  create(@Body() dto: CreateTicketDto,@CurrentUser() userData: UserData, @UploadedFiles() files?: Express.Multer.File[]) {
+    return this.ticketsService.create(dto,userData,files)
   }
 
   @Get()
@@ -23,7 +30,7 @@ export class TicketsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
+  update(@Param('id') id: string, @Body() updateTicketDto) {
     return this.ticketsService.update(+id, updateTicketDto);
   }
 

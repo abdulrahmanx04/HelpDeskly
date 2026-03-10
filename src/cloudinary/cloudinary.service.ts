@@ -19,7 +19,7 @@ private MAX_IMAGE_SIZE= 5 * 1024 * 1024
  private MAX_VIDEO_SIZE = 100 * 1024 * 1024
  private  MAX_RAW_SIZE = 10 * 1024 * 1024
 
-  async uploadFile(file: Express.Multer.File, folder: string){
+  async uploadFile(file: Express.Multer.File, folder: string): Promise<UploadApiResponse>{
     if(!file) {
         throw new BadRequestException('No file uploaded')
       }

@@ -3,8 +3,8 @@ import { AuthRequest } from "../interfaces/all.interfaces";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Tenant } from "src/tenants/entities/tenant.entity";
 import { Repository } from "typeorm";
-import { TenantMember } from "src/tenants/entities/tenant.member.entity";
 import { MemberStatus } from "../enums/all.enums";
+import { TenantMember } from "src/members/entities/member.entity";
 
 
 @Injectable()
